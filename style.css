@@ -88,13 +88,11 @@ input {
 .hero h1 {
   font-size: clamp(2.55rem, 4.6vw, 4.45rem);
   line-height: 1.12;
-  max-width: none;
-  word-break: keep-all;
+  max-width: 13ch;
 }
 
 .hero-line {
   display: block;
-  white-space: nowrap;
 }
 
 .section-heading h2 {
@@ -1339,14 +1337,6 @@ input {
 
   .hero {
     padding-top: 40px;
-  }
-
-  .hero h1 {
-    font-size: clamp(2.05rem, 9vw, 2.6rem);
-  }
-
-  .hero-line {
-    white-space: normal;
   }
 
   .hero-actions,
