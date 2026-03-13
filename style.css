@@ -110,6 +110,8 @@ input {
 .step-card p {
   margin: 0;
   color: var(--ink-soft);
+  word-break: keep-all;
+  line-break: strict;
 }
 
 .section-dark .section-heading p,
@@ -629,6 +631,8 @@ input {
 .step-card h3,
 .comparison-card h3 {
   margin: 0 0 10px;
+  word-break: keep-all;
+  line-break: strict;
 }
 
 .problem-solved {
