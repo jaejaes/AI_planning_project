@@ -1149,6 +1149,17 @@ input {
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+.lead-form select {
+  width: 100%;
+  min-height: 54px;
+  padding: 0 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(12, 27, 51, 0.12);
+  background: #fff;
+  color: var(--ink);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
 .lead-form textarea {
   width: 100%;
   min-height: 120px;
@@ -1167,6 +1178,12 @@ input {
   box-shadow: 0 0 0 4px rgba(31, 94, 255, 0.1);
 }
 
+.lead-form select:focus {
+  outline: none;
+  border-color: rgba(31, 94, 255, 0.45);
+  box-shadow: 0 0 0 4px rgba(31, 94, 255, 0.1);
+}
+
 .lead-form textarea:focus {
   outline: none;
   border-color: rgba(31, 94, 255, 0.45);
@@ -1174,6 +1191,11 @@ input {
 }
 
 .lead-form input.invalid {
+  border-color: rgba(212, 54, 54, 0.7);
+  box-shadow: 0 0 0 4px rgba(212, 54, 54, 0.08);
+}
+
+.lead-form select.invalid {
   border-color: rgba(212, 54, 54, 0.7);
   box-shadow: 0 0 0 4px rgba(212, 54, 54, 0.08);
 }

@@ -762,16 +762,16 @@
       <div class="container final-cta-grid">
         <div class="final-copy reveal">
           <span class="eyebrow">Next Action</span>
-          <h2>고객 관점 MVP를 실제 데이터로 검증해보세요</h2>
+          <h2>고객 정보를 입력하고 개인 맞춤 상환 우선순위 전략을 받아보세요</h2>
           <p>
-            다중채무 고객의 상환 행동을 어떻게 전략적으로 전환할 수 있는지,
-            PriorityAI MVP PoC로 빠르게 검증해보세요.
+            현재 채무 구조와 상환 여력을 입력하면,
+            AI가 우선 상환 순서와 예상 이자 절감 효과를 계산해 전략 초안을 제공합니다.
           </p>
           <div class="cta-badges">
             <span>부채 구조 분석</span>
             <span>상환 순서 추천</span>
             <span>이자 절감 시뮬레이션</span>
-            <span>KPI 검증</span>
+            <span>전략 리포트 제공</span>
           </div>
         </div>
 
@@ -785,41 +785,67 @@
           <div class="form-grid">
             <label>
               <span>이름</span>
-              <input type="text" name="name" placeholder="담당자 이름" required>
+              <input type="text" name="name" placeholder="홍길동" required>
             </label>
             <label>
-              <span>회사명</span>
-              <input type="text" name="company" placeholder="기관 또는 회사명" required>
+              <span>연락처</span>
+              <input type="tel" name="phone" placeholder="010-1234-5678" required>
             </label>
             <label>
               <span>이메일</span>
-              <input type="email" name="email" placeholder="name@company.com" required>
+              <input type="email" name="email" placeholder="name@example.com" required>
             </label>
             <label>
-              <span>직무</span>
-              <input type="text" name="role" placeholder="리스크 전략 / 회수 전략 / 디지털 혁신" required>
+              <span>직업/업종</span>
+              <input type="text" name="occupation" placeholder="자영업(제조업), 프리랜서 등" required>
+            </label>
+            <label>
+              <span>총 부채 규모(원)</span>
+              <input type="number" name="total_debt" min="0" step="100000" placeholder="640000000" required>
+            </label>
+            <label>
+              <span>월 상환 가능 금액(원)</span>
+              <input type="number" name="monthly_budget" min="0" step="10000" placeholder="2500000" required>
+            </label>
+            <label>
+              <span>이용 중인 금융기관 수</span>
+              <input type="number" name="lender_count" min="1" max="20" placeholder="4" required>
+            </label>
+            <label>
+              <span>현재 연체 상태</span>
+              <select name="delinquency_status" required>
+                <option value="">선택해주세요</option>
+                <option value="none">연체 없음</option>
+                <option value="minor">30일 미만 단기 연체</option>
+                <option value="medium">30~90일 연체</option>
+                <option value="severe">90일 이상 연체</option>
+              </select>
             </label>
             <label class="form-grid-full">
-              <span>문의 내용</span>
+              <span>추가 상황(선택)</span>
               <textarea
                 name="message"
                 rows="4"
-                placeholder="검토하고 싶은 고객군, 현재 과제, 기대하는 PoC 목표를 작성해주세요."
-                required
+                placeholder="예: 매출 회복 예상 시점, 협상 가능한 금융기관, 우선 해결하고 싶은 채무"
               ></textarea>
             </label>
           </div>
-          <input type="hidden" name="_subject" value="PriorityAI PoC 문의">
+          <input type="hidden" name="_subject" value="PriorityAI 고객 상환 전략 요청">
           <input type="hidden" name="_replyto" value="">
           <input type="hidden" name="form_source" value="direct_contact">
           <input type="text" name="_gotcha" class="hidden-field" tabindex="-1" autocomplete="off">
           <label class="consent-row">
             <input type="checkbox" name="consent" required>
-            <span>개인정보 수집 및 문의 응대 목적으로 활용하는 것에 동의합니다.</span>
+            <span>개인정보 수집 및 상환 전략 안내 목적으로 활용하는 것에 동의합니다.</span>
           </label>
           <div class="form-actions">
-            <button class="button button-primary" type="submit" data-analytics="cta_request_poc_form">무료 PoC 요청</button>
-            <a class="button button-secondary" href="mailto:hello@priorityai.example" data-analytics="cta_book_demo_footer">제품 데모 예약</a>
+            <button
+              class="button button-primary"
+              type="submit"
+              data-analytics="cta_request_poc_form"
+              data-default-label="상환 우선순위 전략 받기"
+            >상환 우선순위 전략 받기</button>
+            <a class="button button-secondary" href="mailto:hello@priorityai.example" data-analytics="cta_book_demo_footer">상담 예약</a>
           </div>
           <p class="form-message" aria-live="polite"></p>
         </form>

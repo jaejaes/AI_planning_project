@@ -223,13 +223,14 @@ const setFormSubmitting = (isSubmitting) => {
     return;
   }
 
+  const defaultLabel = submitButton.dataset.defaultLabel || '전략 요청';
   submitButton.disabled = isSubmitting;
-  submitButton.textContent = isSubmitting ? '전송 중...' : '무료 PoC 요청';
+  submitButton.textContent = isSubmitting ? '전송 중...' : defaultLabel;
 };
 
 if (form) {
   const endpoint = form.getAttribute('action');
-  const requiredFields = Array.from(form.querySelectorAll('input[required], textarea[required]'));
+  const requiredFields = Array.from(form.querySelectorAll('input[required], textarea[required], select[required]'));
   const honeypotField = form.querySelector('input[name="_gotcha"]');
   const emailField = form.querySelector('input[name="email"]');
 
@@ -286,10 +287,10 @@ if (form) {
       if (response.ok) {
         trackEvent('generate_lead', {
           form_name: 'request_poc',
-          lead_type: 'poc_request',
+          lead_type: 'customer_strategy_request',
           form_source: formSourceInput?.value || 'direct_contact'
         });
-        formMessage.textContent = '요청이 접수되었습니다. 담당자가 곧 연락드리겠습니다.';
+        formMessage.textContent = '요청이 접수되었습니다. 입력하신 정보를 바탕으로 전략 안내를 준비하고 있습니다.';
         formMessage.style.color = '#0f7e72';
         form.reset();
         if (formSourceInput) {
