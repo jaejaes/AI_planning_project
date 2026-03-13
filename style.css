@@ -14,7 +14,7 @@
   --radius-lg: 28px;
   --radius-md: 20px;
   --radius-sm: 14px;
-  --container: 1180px;
+  --container: 1320px;
   --header-height: 84px;
 }
 
@@ -53,7 +53,7 @@ input {
 }
 
 .container {
-  width: min(calc(100% - 40px), var(--container));
+  width: min(calc(100% - 32px), var(--container));
   margin: 0 auto;
 }
 
@@ -251,9 +251,9 @@ input {
 
 .hero-grid {
   display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
+  grid-template-columns: 1fr 1fr;
   align-items: center;
-  gap: 48px;
+  gap: 36px;
 }
 
 .hero-copy {
@@ -1302,6 +1302,10 @@ input {
 
   .section {
     padding: 84px 0;
+  }
+
+  .container {
+    width: min(calc(100% - 24px), var(--container));
   }
 
   .header-inner {
