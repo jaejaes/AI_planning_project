@@ -60,12 +60,12 @@ Tracking placeholders are defined in `index.html`:
 
 ```html
 window.ANALYTICS_CONFIG = {
-  ga4MeasurementId: "G-XXXXXXXXXX",
+  ga4MeasurementId: "G-08TNKEJNM4",
   contentsquareTagId: "eaeb680a6a6c2"
 };
 ```
 
-Replace the GA4 placeholder with your real GA4 Measurement ID. The Contentsquare tag ID is already set.
+Both analytics IDs are now set in the current project version.
 
 The site already sends basic events for:
 
