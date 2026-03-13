@@ -8,6 +8,13 @@
     name="description"
     content="AI-powered repayment priority optimization for financial institutions. Influence borrower repayment behavior before delinquency with personalized incentives and predictive analysis."
   >
+  <script>
+    window.ANALYTICS_CONFIG = {
+      ga4MeasurementId: "G-XXXXXXXXXX",
+      hotjarSiteId: "0000000",
+      hotjarSnippetVersion: 6
+    };
+  </script>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -33,7 +40,7 @@
         </ul>
       </nav>
 
-      <a class="button button-primary header-cta" href="#contact">Request Free PoC</a>
+      <a class="button button-primary header-cta" href="#contact" data-analytics="cta_request_poc_header">Request Free PoC</a>
     </div>
   </header>
 
@@ -52,8 +59,8 @@
           </p>
 
           <div class="hero-actions">
-            <a class="button button-primary" href="#contact">Request Free PoC</a>
-            <a class="button button-secondary" href="#solution">See AI Repayment Demo</a>
+            <a class="button button-primary" href="#contact" data-analytics="cta_request_poc_hero">Request Free PoC</a>
+            <a class="button button-secondary" href="#solution" data-analytics="cta_demo_hero">See AI Repayment Demo</a>
           </div>
 
           <div class="hero-metrics">
@@ -448,7 +455,7 @@
           </div>
           <div class="form-actions">
             <button class="button button-primary" type="submit">Request Free PoC</button>
-            <a class="button button-secondary" href="mailto:hello@priorityai.example">Book Product Demo</a>
+            <a class="button button-secondary" href="mailto:hello@priorityai.example" data-analytics="cta_book_demo_footer">Book Product Demo</a>
           </div>
           <p class="form-message" aria-live="polite"></p>
         </form>

@@ -53,3 +53,24 @@ git push -u origin main
 
 - `vercel.json` contains a simple static-site deployment configuration.
 - No package installation is required.
+
+## Analytics Setup
+
+Tracking placeholders are defined in `index.html`:
+
+```html
+window.ANALYTICS_CONFIG = {
+  ga4MeasurementId: "G-XXXXXXXXXX",
+  hotjarSiteId: "0000000",
+  hotjarSnippetVersion: 6
+};
+```
+
+Replace those values with your real GA4 Measurement ID and Hotjar Site ID.
+
+The site already sends basic events for:
+
+- CTA clicks
+- Mobile navigation toggle
+- Lead form validation errors
+- Lead form submission

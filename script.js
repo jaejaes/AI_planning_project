@@ -1,3 +1,4 @@
+const analyticsConfig = window.ANALYTICS_CONFIG || {};
 const header = document.querySelector('.site-header');
 const navToggle = document.querySelector('.nav-toggle');
 const navMenu = document.querySelector('.nav-menu');
@@ -5,6 +6,64 @@ const navLinks = document.querySelectorAll('.nav-menu a, .button[href^="#"], .lo
 const form = document.querySelector('.lead-form');
 const formMessage = document.querySelector('.form-message');
 const revealElements = document.querySelectorAll('.reveal');
+const trackedCtas = document.querySelectorAll('[data-analytics]');
+
+const loadScript = (src) => {
+  const script = document.createElement('script');
+  script.async = true;
+  script.src = src;
+  document.head.appendChild(script);
+};
+
+const initGA4 = () => {
+  const measurementId = analyticsConfig.ga4MeasurementId;
+  if (!measurementId || measurementId === 'G-XXXXXXXXXX') {
+    return;
+  }
+
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = window.gtag || function gtag() {
+    window.dataLayer.push(arguments);
+  };
+
+  window.gtag('js', new Date());
+  window.gtag('config', measurementId, {
+    anonymize_ip: true
+  });
+
+  loadScript(`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`);
+};
+
+const initHotjar = () => {
+  const siteId = analyticsConfig.hotjarSiteId;
+  if (!siteId || siteId === '0000000') {
+    return;
+  }
+
+  (function init(h, o, t, j, a, r) {
+    h.hj = h.hj || function hj() {
+      (h.hj.q = h.hj.q || []).push(arguments);
+    };
+    h._hjSettings = {
+      hjid: siteId,
+      hjsv: analyticsConfig.hotjarSnippetVersion || 6
+    };
+    a = o.getElementsByTagName('head')[0];
+    r = o.createElement('script');
+    r.async = 1;
+    r.src = `${t}${h._hjSettings.hjid}${j}${h._hjSettings.hjsv}`;
+    a.appendChild(r);
+  })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
+};
+
+const trackEvent = (eventName, params = {}) => {
+  if (typeof window.gtag === 'function') {
+    window.gtag('event', eventName, params);
+  }
+};
+
+initGA4();
+initHotjar();
 
 const toggleHeaderState = () => {
   header.classList.toggle('scrolled', window.scrollY > 12);
@@ -17,6 +76,7 @@ if (navToggle) {
   navToggle.addEventListener('click', () => {
     const isOpen = navMenu.classList.toggle('is-open');
     navToggle.setAttribute('aria-expanded', String(isOpen));
+    trackEvent('mobile_nav_toggle', { menu_state: isOpen ? 'open' : 'closed' });
   });
 }
 
@@ -43,6 +103,15 @@ navLinks.forEach((link) => {
 
     navMenu.classList.remove('is-open');
     navToggle?.setAttribute('aria-expanded', 'false');
+  });
+});
+
+trackedCtas.forEach((cta) => {
+  cta.addEventListener('click', () => {
+    trackEvent('cta_click', {
+      cta_name: cta.dataset.analytics,
+      cta_text: cta.textContent.trim()
+    });
   });
 });
 
@@ -93,8 +162,16 @@ if (form) {
     if (!isFormValid) {
       formMessage.textContent = 'Please complete all fields with valid information.';
       formMessage.style.color = '#c43d3d';
+      trackEvent('lead_form_validation_error', {
+        form_name: 'request_poc'
+      });
       return;
     }
+
+    trackEvent('generate_lead', {
+      form_name: 'request_poc',
+      lead_type: 'poc_request'
+    });
 
     formMessage.textContent = 'Thank you. Your request is ready for the PoC team to review.';
     formMessage.style.color = '#0f7e72';
