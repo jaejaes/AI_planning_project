@@ -756,7 +756,13 @@
           </div>
         </div>
 
-        <form class="lead-form reveal" novalidate>
+        <form
+          class="lead-form reveal"
+          id="lead-form"
+          action="https://formspree.io/f/xzdjgwzn"
+          method="POST"
+          novalidate
+        >
           <div class="form-grid">
             <label>
               <span>이름</span>
@@ -774,7 +780,24 @@
               <span>직무</span>
               <input type="text" name="role" placeholder="리스크 전략 / 회수 전략 / 디지털 혁신" required>
             </label>
+            <label class="form-grid-full">
+              <span>문의 내용</span>
+              <textarea
+                name="message"
+                rows="4"
+                placeholder="검토하고 싶은 고객군, 현재 과제, 기대하는 PoC 목표를 작성해주세요."
+                required
+              ></textarea>
+            </label>
           </div>
+          <input type="hidden" name="_subject" value="PriorityAI PoC 문의">
+          <input type="hidden" name="_replyto" value="">
+          <input type="hidden" name="form_source" value="direct_contact">
+          <input type="text" name="_gotcha" class="hidden-field" tabindex="-1" autocomplete="off">
+          <label class="consent-row">
+            <input type="checkbox" name="consent" required>
+            <span>개인정보 수집 및 문의 응대 목적 활용에 동의합니다.</span>
+          </label>
           <div class="form-actions">
             <button class="button button-primary" type="submit" data-analytics="cta_request_poc_form">무료 PoC 요청</button>
             <a class="button button-secondary" href="mailto:hello@priorityai.example" data-analytics="cta_book_demo_footer">제품 데모 예약</a>

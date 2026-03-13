@@ -11,6 +11,8 @@ const mobileTabs = document.querySelectorAll('.mobile-tab');
 const mobileScreens = document.querySelectorAll('[data-mobile-screen]');
 const mobileCaptionTitle = document.querySelector('#mobile-caption-title strong');
 const mobileCaptionText = document.querySelector('#mobile-caption-text');
+const formSourceInput = document.querySelector('input[name="form_source"]');
+const replyToInput = document.querySelector('input[name="_replyto"]');
 
 const mobileCopy = {
   dashboard: {
@@ -94,7 +96,9 @@ initGA4();
 initContentsquare();
 
 const toggleHeaderState = () => {
-  header.classList.toggle('scrolled', window.scrollY > 12);
+  if (header) {
+    header.classList.toggle('scrolled', window.scrollY > 12);
+  }
 };
 
 toggleHeaderState();
@@ -116,7 +120,7 @@ navLinks.forEach((link) => {
     }
 
     const target = document.querySelector(href);
-    if (!target) {
+    if (!target || !header) {
       return;
     }
 
@@ -136,10 +140,15 @@ navLinks.forEach((link) => {
 
 trackedCtas.forEach((cta) => {
   cta.addEventListener('click', () => {
+    const ctaName = cta.dataset.analytics || '';
     trackEvent('cta_click', {
-      cta_name: cta.dataset.analytics,
+      cta_name: ctaName,
       cta_text: cta.textContent.trim()
     });
+
+    if (formSourceInput && ctaName.startsWith('cta_')) {
+      formSourceInput.value = ctaName;
+    }
   });
 });
 
@@ -188,50 +197,129 @@ revealElements.forEach((element) => revealObserver.observe(element));
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const validateField = (field) => {
-  const value = field.value.trim();
-  let isValid = value.length > 0;
+  let isValid = true;
 
-  if (field.type === 'email') {
-    isValid = emailPattern.test(value);
+  if (field.type === 'checkbox') {
+    isValid = field.checked;
+  } else {
+    const value = field.value.trim();
+    isValid = value.length > 0;
+    if (field.type === 'email') {
+      isValid = emailPattern.test(value);
+    }
   }
 
   field.classList.toggle('invalid', !isValid);
   return isValid;
 };
 
-if (form) {
-  const fields = Array.from(form.querySelectorAll('input[required]'));
+const setFormSubmitting = (isSubmitting) => {
+  if (!form) {
+    return;
+  }
 
-  fields.forEach((field) => {
+  const submitButton = form.querySelector('button[type="submit"]');
+  if (!submitButton) {
+    return;
+  }
+
+  submitButton.disabled = isSubmitting;
+  submitButton.textContent = isSubmitting ? '전송 중...' : '무료 PoC 요청';
+};
+
+if (form) {
+  const endpoint = form.getAttribute('action');
+  const requiredFields = Array.from(form.querySelectorAll('input[required], textarea[required]'));
+  const honeypotField = form.querySelector('input[name="_gotcha"]');
+  const emailField = form.querySelector('input[name="email"]');
+
+  requiredFields.forEach((field) => {
     field.addEventListener('blur', () => validateField(field));
     field.addEventListener('input', () => {
       if (field.classList.contains('invalid')) {
         validateField(field);
       }
     });
+    if (field.type === 'checkbox') {
+      field.addEventListener('change', () => validateField(field));
+    }
   });
 
-  form.addEventListener('submit', (event) => {
+  form.addEventListener('submit', async (event) => {
     event.preventDefault();
 
-    const isFormValid = fields.every((field) => validateField(field));
-
+    const isFormValid = requiredFields.every((field) => validateField(field));
     if (!isFormValid) {
       formMessage.textContent = '필수 항목을 모두 올바르게 입력해주세요.';
       formMessage.style.color = '#c43d3d';
-      trackEvent('lead_form_validation_error', {
-        form_name: 'request_poc'
+      trackEvent('lead_form_validation_error', { form_name: 'request_poc' });
+      return;
+    }
+
+    if (honeypotField && honeypotField.value.trim() !== '') {
+      formMessage.textContent = '제출이 차단되었습니다. 다시 시도해주세요.';
+      formMessage.style.color = '#c43d3d';
+      trackEvent('lead_form_submit_error', {
+        form_name: 'request_poc',
+        error_type: 'honeypot_triggered'
       });
       return;
     }
 
-    trackEvent('generate_lead', {
-      form_name: 'request_poc',
-      lead_type: 'poc_request'
-    });
+    if (replyToInput && emailField) {
+      replyToInput.value = emailField.value.trim();
+    }
 
-    formMessage.textContent = '요청이 접수되었습니다. PoC 검토를 위해 곧 연락드리겠습니다.';
-    formMessage.style.color = '#0f7e72';
-    form.reset();
+    setFormSubmitting(true);
+    formMessage.textContent = '문의 내용을 전송하고 있습니다...';
+    formMessage.style.color = '#50617d';
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json'
+        },
+        body: new FormData(form)
+      });
+
+      if (response.ok) {
+        trackEvent('generate_lead', {
+          form_name: 'request_poc',
+          lead_type: 'poc_request',
+          form_source: formSourceInput?.value || 'direct_contact'
+        });
+        formMessage.textContent = '요청이 접수되었습니다. 담당자가 곧 연락드리겠습니다.';
+        formMessage.style.color = '#0f7e72';
+        form.reset();
+        if (formSourceInput) {
+          formSourceInput.value = 'direct_contact';
+        }
+        return;
+      }
+
+      if (response.status === 429) {
+        formMessage.textContent = '요청이 많습니다. 잠시 후 다시 시도해주세요.';
+        formMessage.style.color = '#c43d3d';
+        trackEvent('lead_form_rate_limited', { form_name: 'request_poc' });
+        return;
+      }
+
+      formMessage.textContent = '전송에 실패했습니다. 잠시 후 다시 시도해주세요.';
+      formMessage.style.color = '#c43d3d';
+      trackEvent('lead_form_submit_error', {
+        form_name: 'request_poc',
+        http_status: String(response.status)
+      });
+    } catch (error) {
+      formMessage.textContent = '네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+      formMessage.style.color = '#c43d3d';
+      trackEvent('lead_form_submit_error', {
+        form_name: 'request_poc',
+        error_type: 'network_error'
+      });
+    } finally {
+      setFormSubmitting(false);
+    }
   });
 }
