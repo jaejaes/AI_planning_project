@@ -88,11 +88,7 @@ input {
 .hero h1 {
   font-size: clamp(2.55rem, 4.6vw, 4.45rem);
   line-height: 1.12;
-  max-width: 13ch;
-}
-
-.hero-line {
-  display: block;
+  max-width: 10.5ch;
 }
 
 .section-heading h2 {
