@@ -7,6 +7,29 @@ const form = document.querySelector('.lead-form');
 const formMessage = document.querySelector('.form-message');
 const revealElements = document.querySelectorAll('.reveal');
 const trackedCtas = document.querySelectorAll('[data-analytics]');
+const mobileTabs = document.querySelectorAll('.mobile-tab');
+const mobileScreens = document.querySelectorAll('[data-mobile-screen]');
+const mobileCaptionTitle = document.querySelector('#mobile-caption-title strong');
+const mobileCaptionText = document.querySelector('#mobile-caption-text');
+
+const mobileCopy = {
+  dashboard: {
+    title: '상환 우선순위 안내',
+    text: '기관의 AI 추천이 차주에게 어떤 부채를 먼저 상환해야 하는지 분명하게 전달되는 순간입니다.'
+  },
+  analysis: {
+    title: '이자 부담 근거 제시',
+    text: '추천 이유를 숫자로 설명해 차주가 상환 순서를 납득하도록 돕는 분석 화면입니다.'
+  },
+  simulator: {
+    title: '개인화 인센티브 체감',
+    text: '금리 인하나 혜택이 실제 월 이자 절감으로 어떻게 느껴지는지 즉시 보여줍니다.'
+  },
+  credit: {
+    title: '행동 변화의 보상 강화',
+    text: '상환 이후 신용 개선과 진척도를 보여줘 우선 상환 행동이 지속되도록 만듭니다.'
+  }
+};
 
 const loadScript = (src) => {
   const script = document.createElement('script');
@@ -120,6 +143,35 @@ trackedCtas.forEach((cta) => {
   });
 });
 
+const setMobileScreen = (targetKey) => {
+  mobileTabs.forEach((tab) => {
+    tab.classList.toggle('is-active', tab.dataset.mobileTarget === targetKey);
+  });
+
+  mobileScreens.forEach((screen) => {
+    screen.classList.toggle('is-active', screen.dataset.mobileScreen === targetKey);
+  });
+
+  if (mobileCopy[targetKey] && mobileCaptionTitle && mobileCaptionText) {
+    mobileCaptionTitle.textContent = mobileCopy[targetKey].title;
+    mobileCaptionText.textContent = mobileCopy[targetKey].text;
+  }
+};
+
+mobileTabs.forEach((tab) => {
+  tab.addEventListener('click', () => {
+    const targetKey = tab.dataset.mobileTarget;
+    setMobileScreen(targetKey);
+    trackEvent('mobile_story_tab_click', {
+      mobile_story_step: targetKey
+    });
+  });
+});
+
+if (mobileTabs.length > 0) {
+  setMobileScreen('dashboard');
+}
+
 const revealObserver = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
     if (entry.isIntersecting) {
@@ -165,7 +217,7 @@ if (form) {
     const isFormValid = fields.every((field) => validateField(field));
 
     if (!isFormValid) {
-      formMessage.textContent = 'Please complete all fields with valid information.';
+      formMessage.textContent = '필수 항목을 모두 올바르게 입력해주세요.';
       formMessage.style.color = '#c43d3d';
       trackEvent('lead_form_validation_error', {
         form_name: 'request_poc'
@@ -178,7 +230,7 @@ if (form) {
       lead_type: 'poc_request'
     });
 
-    formMessage.textContent = 'Thank you. Your request is ready for the PoC team to review.';
+    formMessage.textContent = '요청이 접수되었습니다. PoC 검토를 위해 곧 연락드리겠습니다.';
     formMessage.style.color = '#0f7e72';
     form.reset();
   });
