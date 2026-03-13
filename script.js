@@ -34,26 +34,31 @@ const initGA4 = () => {
   loadScript(`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`);
 };
 
-const initHotjar = () => {
-  const siteId = analyticsConfig.hotjarSiteId;
-  if (!siteId || siteId === '0000000') {
+const initContentsquare = () => {
+  const tagId = analyticsConfig.contentsquareTagId;
+  if (!tagId || tagId === 'YOUR_CONTENTSQUARE_TAG_ID') {
     return;
   }
 
-  (function init(h, o, t, j, a, r) {
-    h.hj = h.hj || function hj() {
-      (h.hj.q = h.hj.q || []).push(arguments);
-    };
-    h._hjSettings = {
-      hjid: siteId,
-      hjsv: analyticsConfig.hotjarSnippetVersion || 6
-    };
-    a = o.getElementsByTagName('head')[0];
-    r = o.createElement('script');
-    r.async = 1;
-    r.src = `${t}${h._hjSettings.hjid}${j}${h._hjSettings.hjsv}`;
-    a.appendChild(r);
-  })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
+  window._uxa = window._uxa || [];
+
+  if (typeof window.CS_CONF === 'undefined') {
+    window._uxa.push([
+      'setPath',
+      window.location.pathname + window.location.hash.replace('#', '?__')
+    ]);
+
+    const csScript = document.createElement('script');
+    csScript.type = 'text/javascript';
+    csScript.async = true;
+    csScript.src = `https://t.contentsquare.net/uxa/${encodeURIComponent(tagId)}.js`;
+    document.head.appendChild(csScript);
+  } else {
+    window._uxa.push([
+      'trackPageview',
+      window.location.pathname + window.location.hash.replace('#', '?__')
+    ]);
+  }
 };
 
 const trackEvent = (eventName, params = {}) => {
@@ -63,7 +68,7 @@ const trackEvent = (eventName, params = {}) => {
 };
 
 initGA4();
-initHotjar();
+initContentsquare();
 
 const toggleHeaderState = () => {
   header.classList.toggle('scrolled', window.scrollY > 12);

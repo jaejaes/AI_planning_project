@@ -61,12 +61,11 @@ Tracking placeholders are defined in `index.html`:
 ```html
 window.ANALYTICS_CONFIG = {
   ga4MeasurementId: "G-XXXXXXXXXX",
-  hotjarSiteId: "0000000",
-  hotjarSnippetVersion: 6
+  contentsquareTagId: "YOUR_CONTENTSQUARE_TAG_ID"
 };
 ```
 
-Replace those values with your real GA4 Measurement ID and Hotjar Site ID.
+Replace those values with your real GA4 Measurement ID and Contentsquare Tag ID.
 
 The site already sends basic events for:
 
